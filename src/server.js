@@ -2,8 +2,9 @@ import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
 
-// import http from 'http' // Importe o módulo http
-// import { Server } from 'socket.io'
+import http from 'http'
+
+import { Server } from 'socket.io'
 
 import dotEnv from 'dotenv'
 
@@ -22,16 +23,27 @@ mongoose
   })
 
 const app = express()
-/* const server = http.createServer(app)
-const io = new Server(server) */
+const server = http.createServer(app)
 app.use(cors())
 
-/* io.on('connection', (socket) => {
-  console.log('Usuário conectado', socket.id)
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3333',
+    credentials: true,
+  },
+})
 
-  // Emita um evento Socket.IO para notificar os clientes
-  io.sockets.emit('newTodo')
-}) */
+const connectedUsers = {}
+
+io.emit('add To-do')
+
+io.on('connection', (socket) => {
+  console.log(socket.handshake.query)
+
+  const { user_id } = socket.handshake.query
+
+  connectedUsers[user_id] = socket.id
+})
 
 app.use(express.json())
 
