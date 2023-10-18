@@ -51,10 +51,11 @@ todoRoute.delete(
 
     // Tente excluir o "to-do" com base no ID
     const deletedTodo = await Todo.findByIdAndRemove(todoId)
-
     if (deletedTodo) {
+      // To-Do excluído com sucesso
       res.send({ message: 'To-Do excluído com sucesso', todo: deletedTodo })
     } else {
+      // To-Do não encontrado
       res.status(404).send({ message: 'To-Do não encontrado' })
     }
   }),
